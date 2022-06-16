@@ -1,11 +1,40 @@
 const express = require("express")
-const app = express()
+const { MongoClient, ServerApiVersion } = require('mongodb');
 const cors = require('cors')
+
+
+const app = express()
 
 app.use(cors())
 app.use(express.json())
 
 const port = process.env.PORT || 5000;
+
+
+/* Connect The App With MongoDB Data Base */
+
+
+const uri = "mongodb+srv://dbuserRabiul:Va0WKcWl3Gk6EsS8@cluster0.amhxt.mongodb.net/?retryWrites=true&w=majority";
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+
+async function run() {
+    try {
+        await client.connect();
+        const userCollection = client.db("foodExpress").collection("users");
+        const user = { name: 'Rabiul', email: 'islam@gmail.com' }
+        const result = await userCollection.insertOne(user)
+        console.log(`User inserted with ID: ${result.insertedId} `)
+    }
+    finally {
+        // await client.close();
+    }
+}
+
+run().catch(console.dir);
+
+
+
+
 
 const users = [
     { id: 1, name: "Rabiul", email: "rabiul.dev@gmail.com", job: "web developer" },
